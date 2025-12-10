@@ -1,5 +1,5 @@
 using CourseEnrollmentSystem.Data;
-using CourseEnrollmentSystem.Helper;
+using CourseEnrollmentSystem.Helper.Common;
 using CourseEnrollmentSystem.Models;
 using CourseEnrollmentSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;

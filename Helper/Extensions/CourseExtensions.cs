@@ -1,3 +1,4 @@
+using CourseEnrollmentSystem.Helper.Common;
 using CourseEnrollmentSystem.Models;
 using CourseEnrollmentSystem.ViewModels;
 

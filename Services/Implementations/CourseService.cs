@@ -1,8 +1,8 @@
 using CourseEnrollmentSystem.Data;
 using CourseEnrollmentSystem.Helper;
+using CourseEnrollmentSystem.Helper.Common;
 using CourseEnrollmentSystem.Models;
 using CourseEnrollmentSystem.Services.Interfaces;
-using CourseEnrollmentSystem.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseEnrollmentSystem.Services.Implementations;
@@ -85,7 +85,6 @@ public class CourseService(AppDbContext context) : ICourseService
     {
         var result = new BusinessValidationResult();
 
-        // Example: prevent duplicate titles
         var exists = await _context.Courses
             .AnyAsync(c => c.Title == course.Title && (!ignoreId.HasValue || c.Id != ignoreId.Value));
         if (exists)

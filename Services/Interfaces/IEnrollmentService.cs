@@ -1,5 +1,5 @@
 using CourseEnrollmentSystem.Models;
-using CourseEnrollmentSystem.Helper;
+using CourseEnrollmentSystem.Helper.Common;
 
 namespace CourseEnrollmentSystem.Services.Interfaces;
 

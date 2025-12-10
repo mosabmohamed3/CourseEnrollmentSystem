@@ -1,5 +1,5 @@
 using CourseEnrollmentSystem.Data;
-using CourseEnrollmentSystem.Helper;
+using CourseEnrollmentSystem.Helper.Common;
 using CourseEnrollmentSystem.Models;
 using CourseEnrollmentSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -87,16 +87,12 @@ public class StudentService(AppDbContext context) : IStudentService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> EmailExistsAsync(string email, int? ignoreId = null)
-    {
-        return await _context.Students
+    private async Task<bool> EmailExistsAsync(string email, int? ignoreId = null)
+        => await _context.Students
             .AnyAsync(s => s.Email == email && (!ignoreId.HasValue || s.Id != ignoreId.Value));
-    }
 
-    public async Task<bool> NationalIdExistsAsync(string nationalId, int? ignoreId = null)
-    {
-        return await _context.Students
+    private async Task<bool> NationalIdExistsAsync(string nationalId, int? ignoreId = null)
+        => await _context.Students
             .AnyAsync(s => s.NationalId == nationalId && (!ignoreId.HasValue || s.Id != ignoreId.Value));
-    }
 }
 

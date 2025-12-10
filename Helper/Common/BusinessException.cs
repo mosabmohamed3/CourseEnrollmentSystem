@@ -1,8 +1,8 @@
-namespace CourseEnrollmentSystem.Helper;
+namespace CourseEnrollmentSystem.Helper.Common;
 
 public class BusinessValidationResult
 {
-    public bool IsValid => !Errors.Any();
+    public bool IsValid => Errors.Count == 0;
     public List<FieldError> Errors { get; set; } = new();
 }
 

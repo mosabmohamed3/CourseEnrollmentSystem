@@ -1,4 +1,4 @@
-namespace CourseEnrollmentSystem.ViewModels;
+namespace CourseEnrollmentSystem.Helper.Common;
 
 public class PagedResult<T>
 {
