@@ -1,5 +1,4 @@
-using CourseEnrollmentSystem.Models;
-using CourseEnrollmentSystem.Helper;
+using CourseEnrollmentSystem.Helper.Extensions;
 using CourseEnrollmentSystem.Services.Interfaces;
 using CourseEnrollmentSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,23 +13,7 @@ public class CoursesController(ICourseService courseService) : Controller
     public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
     {
         var result = await _courseService.GetPagedAsync(pageNumber, pageSize);
-
-        var vm = new CourseListViewModel
-        {
-            Courses = result.Items.Select(c => new GetCourseViewModel
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                MaxCapacity = c.MaxCapacity,
-                CurrentEnrollmentCount = c.Enrollments.Count,
-                AvailableSlots = c.AvailableSlots
-            }).ToList(),
-            Page = result.PageNumber,
-            TotalPages = result.TotalPages
-        };
-
-        return View(vm);
+        return View(result.ToCourseListViewModel());
     }
 
     [HttpGet]
@@ -39,24 +22,7 @@ public class CoursesController(ICourseService courseService) : Controller
         var course = await _courseService.GetByIdAsync(id);
         if (course == null) return NotFound();
 
-        var vm = new GetCourseViewModel
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            MaxCapacity = course.MaxCapacity,
-            CurrentEnrollmentCount = course.Enrollments.Count,
-            AvailableSlots = course.AvailableSlots,
-            Enrollments = course.Enrollments
-                .Select(e => new EnrollmentSummaryViewModel
-                {
-                    StudentName = e.Student?.FullName ?? "غير معروف",
-                    EnrolledOn = e.EnrolledOn
-                })
-                .ToList()
-        };
-
-        return View(vm);
+        return View(course.ToViewModelWithEnrollments());
     }
 
     [HttpGet]
@@ -69,13 +35,7 @@ public class CoursesController(ICourseService courseService) : Controller
     {
         if (!ModelState.IsValid) return View(courseVM);
 
-        var course = new Course
-        {
-            Title = courseVM.Title,
-            Description = courseVM.Description,
-            MaxCapacity = courseVM.MaxCapacity
-        };
-
+        var course = courseVM.ToEntity();
         var res = await _courseService.AddAsync(course);
         if (!res.IsValid)
         {
@@ -102,14 +62,7 @@ public class CoursesController(ICourseService courseService) : Controller
         if (id != courseVM.Id) return BadRequest();
         if (!ModelState.IsValid) return View(courseVM);
 
-        var course = new Course
-        {
-            Id = courseVM.Id,
-            Title = courseVM.Title,
-            Description = courseVM.Description,
-            MaxCapacity = courseVM.MaxCapacity
-        };
-
+        var course = courseVM.ToEntity();
         var res = await _courseService.UpdateAsync(course);
         if (!res.IsValid)
         {
@@ -140,17 +93,7 @@ public class CoursesController(ICourseService courseService) : Controller
     private async Task<GetCourseViewModel?> BuildCourseViewModelAsync(int id)
     {
         var course = await _courseService.GetByIdAsync(id);
-        if (course == null) return null;
-
-        return new GetCourseViewModel
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            MaxCapacity = course.MaxCapacity,
-            CurrentEnrollmentCount = course.Enrollments.Count,
-            AvailableSlots = course.AvailableSlots
-        };
+        return course?.ToViewModel();
     }
 }
 

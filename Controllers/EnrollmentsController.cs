@@ -1,4 +1,4 @@
-using CourseEnrollmentSystem.Helper;
+using CourseEnrollmentSystem.Helper.Extensions;
 using CourseEnrollmentSystem.Services.Interfaces;
 using CourseEnrollmentSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +17,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
     public async Task<IActionResult> Index()
     {
         var enrollments = await _enrollmentService.GetAllAsync();
-        var vm = enrollments.Select(e => new EnrollmentListItemViewModel
-        {
-            Id = e.Id,
-            StudentName = e.Student?.FullName!,
-            CourseTitle = e.Course?.Title!,
-            EnrolledOn = e.EnrolledOn
-        });
-
-        return View(vm);
+        return View(enrollments.ToListItemViewModelList());
     }
 
     [HttpGet]
@@ -69,14 +61,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
     {
         var enrollment = await _enrollmentService.GetByIdAsync(id);
         if (enrollment == null) return NotFound();
-        var vm = new EnrollmentListItemViewModel
-        {
-            Id = enrollment.Id,
-            StudentName = enrollment.Student?.FullName!,
-            CourseTitle = enrollment.Course?.Title!,
-            EnrolledOn = enrollment.EnrolledOn
-        };
-        return View(vm);
+        return View(enrollment.ToListItemViewModel());
     }
 
     [HttpPost, ActionName("Delete")]

@@ -1,4 +1,4 @@
-using CourseEnrollmentSystem.Models;
+using CourseEnrollmentSystem.Helper.Extensions;
 using CourseEnrollmentSystem.Services.Interfaces;
 using CourseEnrollmentSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +13,7 @@ public class StudentsController(IStudentService studentService) : Controller
     public async Task<IActionResult> Index()
     {
         var students = await _studentService.GetAllAsync();
-        
-        var result = students.Select(s => new GetStudentViewModel
-        {
-            Id = s.Id,
-            FullName = s.FullName,
-            Email = s.Email,
-            Birthdate = s.Birthdate,
-            NationalId = s.NationalId,
-            PhoneNumber = s.PhoneNumber
-        }).ToList();
-
-        return View(result);
+        return View(students.ToViewModelList());
     }
 
     [HttpGet]
@@ -33,17 +22,7 @@ public class StudentsController(IStudentService studentService) : Controller
         var student = await _studentService.GetByIdAsync(id);
         if (student == null) return NotFound();
 
-        var studentVM = new GetStudentViewModel
-        {
-            Id = student.Id,
-            FullName = student.FullName,
-            Email = student.Email,
-            Birthdate = student.Birthdate,
-            NationalId = student.NationalId,
-            PhoneNumber = student.PhoneNumber
-        };
-
-        return View(studentVM);
+        return View(student.ToViewModel());
     }
 
     [HttpGet]
@@ -56,15 +35,7 @@ public class StudentsController(IStudentService studentService) : Controller
     {
         if (!ModelState.IsValid) return View(studentVM);
 
-        var student = new Student
-        {
-            FullName = studentVM.FullName,
-            Email = studentVM.Email,
-            Birthdate = studentVM.Birthdate,
-            NationalId = studentVM.NationalId,
-            PhoneNumber = studentVM.PhoneNumber
-        };
-
+        var student = studentVM.ToEntity();
         var res = await _studentService.AddAsync(student);
         if (!res.IsValid)
         {
@@ -91,16 +62,7 @@ public class StudentsController(IStudentService studentService) : Controller
     {
         if (!ModelState.IsValid) return View(studentVM);
 
-        var student = new Student
-        {
-            Id = studentVM.Id,
-            FullName = studentVM.FullName,
-            Email = studentVM.Email,
-            Birthdate = studentVM.Birthdate,
-            NationalId = studentVM.NationalId,
-            PhoneNumber = studentVM.PhoneNumber
-        };
-
+        var student = studentVM.ToEntity();
         var res = await _studentService.UpdateAsync(student);
         if (!res.IsValid)
         {
@@ -132,17 +94,7 @@ public class StudentsController(IStudentService studentService) : Controller
     private async Task<GetStudentViewModel?> BuildStudentViewModelAsync(int id)
     {
         var student = await _studentService.GetByIdAsync(id);
-        if (student == null) return null;
-
-        return new GetStudentViewModel
-        {
-            Id = student.Id,
-            FullName = student.FullName,
-            Email = student.Email,
-            Birthdate = student.Birthdate,
-            NationalId = student.NationalId,
-            PhoneNumber = student.PhoneNumber
-        };
+        return student?.ToViewModel();
     }
 }
 
