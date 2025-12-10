@@ -33,6 +33,7 @@ public class CoursesController(ICourseService courseService) : Controller
         return View(vm);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
         var course = await _courseService.GetByIdAsync(id);
@@ -58,10 +59,9 @@ public class CoursesController(ICourseService courseService) : Controller
         return View(vm);
     }
 
+    [HttpGet]
     public IActionResult Create()
-    {
-        return View(new CreateCourseViewModel());
-    }
+        => View(new CreateCourseViewModel());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -87,21 +87,11 @@ public class CoursesController(ICourseService courseService) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var course = await _courseService.GetByIdAsync(id);
-        if (course == null) return NotFound();
-
-        var vm = new GetCourseViewModel
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            MaxCapacity = course.MaxCapacity,
-            CurrentEnrollmentCount = course.Enrollments.Count,
-            AvailableSlots = course.AvailableSlots
-        };
-
+        var vm = await BuildCourseViewModelAsync(id);
+        if (vm == null) return NotFound();
         return View(vm);
     }
 
@@ -131,21 +121,11 @@ public class CoursesController(ICourseService courseService) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
-        var course = await _courseService.GetByIdAsync(id);
-        if (course == null) return NotFound();
-
-        var vm = new GetCourseViewModel
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            MaxCapacity = course.MaxCapacity,
-            CurrentEnrollmentCount = course.Enrollments.Count,
-            AvailableSlots = course.AvailableSlots
-        };
-
+        var vm = await BuildCourseViewModelAsync(id);
+        if (vm == null) return NotFound();
         return View(vm);
     }
 
@@ -155,6 +135,22 @@ public class CoursesController(ICourseService courseService) : Controller
     {
         await _courseService.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<GetCourseViewModel?> BuildCourseViewModelAsync(int id)
+    {
+        var course = await _courseService.GetByIdAsync(id);
+        if (course == null) return null;
+
+        return new GetCourseViewModel
+        {
+            Id = course.Id,
+            Title = course.Title,
+            Description = course.Description,
+            MaxCapacity = course.MaxCapacity,
+            CurrentEnrollmentCount = course.Enrollments.Count,
+            AvailableSlots = course.AvailableSlots
+        };
     }
 }
 

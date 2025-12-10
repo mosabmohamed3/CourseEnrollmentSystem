@@ -9,6 +9,7 @@ public class StudentsController(IStudentService studentService) : Controller
 {
     private readonly IStudentService _studentService = studentService;
 
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var students = await _studentService.GetAllAsync();
@@ -26,6 +27,7 @@ public class StudentsController(IStudentService studentService) : Controller
         return View(result);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
         var student = await _studentService.GetByIdAsync(id);
@@ -44,10 +46,9 @@ public class StudentsController(IStudentService studentService) : Controller
         return View(studentVM);
     }
 
+    [HttpGet]
     public IActionResult Create()
-    {
-        return View(new CreateStudentViewModel { Birthdate = DateTime.UtcNow.AddYears(-18) });
-    }
+        => View(new CreateStudentViewModel { Birthdate = DateTime.UtcNow.AddYears(-18) });
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -76,22 +77,12 @@ public class StudentsController(IStudentService studentService) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var student = await _studentService.GetByIdAsync(id);
-        if (student == null) return NotFound();
-
-        var res = new GetStudentViewModel
-        {
-            Id = student.Id,
-            FullName = student.FullName,
-            Email = student.Email,
-            Birthdate = student.Birthdate,
-            NationalId = student.NationalId,
-            PhoneNumber = student.PhoneNumber
-        };
-
-        return View(res);
+        var vm = await BuildStudentViewModelAsync(id);
+        if (vm == null) return NotFound();
+        return View(vm);
     }
 
     [HttpPost]
@@ -122,22 +113,12 @@ public class StudentsController(IStudentService studentService) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
-        var student = await _studentService.GetByIdAsync(id);
-        if (student == null) return NotFound();
-
-        var res = new GetStudentViewModel
-        {
-            Id = student.Id,
-            FullName = student.FullName,
-            Email = student.Email,
-            Birthdate = student.Birthdate,
-            NationalId = student.NationalId,
-            PhoneNumber = student.PhoneNumber
-        };
-
-        return View(res);
+        var vm = await BuildStudentViewModelAsync(id);
+        if (vm == null) return NotFound();
+        return View(vm);
     }
 
     [HttpPost, ActionName("Delete")]
@@ -146,6 +127,22 @@ public class StudentsController(IStudentService studentService) : Controller
     {
         await _studentService.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<GetStudentViewModel?> BuildStudentViewModelAsync(int id)
+    {
+        var student = await _studentService.GetByIdAsync(id);
+        if (student == null) return null;
+
+        return new GetStudentViewModel
+        {
+            Id = student.Id,
+            FullName = student.FullName,
+            Email = student.Email,
+            Birthdate = student.Birthdate,
+            NationalId = student.NationalId,
+            PhoneNumber = student.PhoneNumber
+        };
     }
 }
 

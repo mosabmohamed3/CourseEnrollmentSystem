@@ -13,6 +13,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
     private readonly IStudentService _studentService = studentService;
     private readonly ICourseService _courseService = courseService;
 
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var enrollments = await _enrollmentService.GetAllAsync();
@@ -27,6 +28,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
         return View(vm);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var vm = await BuildEnrollmentFormViewModel();
@@ -62,6 +64,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
         return Json(new { availableSlots = slots });
     }
 
+    [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
         var enrollment = await _enrollmentService.GetByIdAsync(id);
@@ -69,8 +72,8 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
         var vm = new EnrollmentListItemViewModel
         {
             Id = enrollment.Id,
-            StudentName = enrollment.Student?.FullName ?? "غير معروف",
-            CourseTitle = enrollment.Course?.Title ?? "غير معروف",
+            StudentName = enrollment.Student?.FullName!,
+            CourseTitle = enrollment.Course?.Title!,
             EnrolledOn = enrollment.EnrolledOn
         };
         return View(vm);
@@ -105,7 +108,7 @@ public class EnrollmentsController(IEnrollmentService enrollmentService, IStuden
             }),
             Courses = courses.Select(c => new SelectListItem
             {
-                Text = $"{c.Title} (سعة: {c.MaxCapacity})",
+                Text = $"{c.Title} (Capacity: {c.MaxCapacity})",
                 Value = c.Id.ToString(),
                 Selected = selectedCourse.HasValue && c.Id == selectedCourse.Value
             })
