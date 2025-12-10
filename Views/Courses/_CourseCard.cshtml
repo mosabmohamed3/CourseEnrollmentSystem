@@ -1,0 +1,16 @@
+@model CourseEnrollmentSystem.ViewModels.GetCourseViewModel
+
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">@Model.Description</p>
+        <p class="card-text mb-0"><strong>Max capacity:</strong> @Model.MaxCapacity</p>
+        <p class="card-text"><strong>Available slots:</strong> @Model.AvailableSlots</p>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@Model.Id">Details</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    </div>
+</div>
+

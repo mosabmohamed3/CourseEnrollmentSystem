@@ -1,0 +1,31 @@
+@model CourseEnrollmentSystem.ViewModels.GetCourseViewModel
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h2 class="mb-3">Course Details</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">@Model.Description</p>
+        <p class="card-text"><strong>Max capacity:</strong> @Model.MaxCapacity</p>
+        <p class="card-text"><strong>Available slots:</strong> @Model.AvailableSlots</p>
+    </div>
+</div>
+
+<h4>Enrolled Students (@Model.Enrollments.Count)</h4>
+<ul class="list-group mb-3">
+    @foreach (var enrollment in Model.Enrollments)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            @enrollment.StudentName
+            <span class="badge bg-secondary">@enrollment.EnrolledOn.ToShortDateString()</span>
+        </li>
+    }
+</ul>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back</a>
+
