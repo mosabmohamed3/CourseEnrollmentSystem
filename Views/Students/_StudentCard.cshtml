@@ -1,0 +1,20 @@
+@model CourseEnrollmentSystem.ViewModels.GetStudentViewModel
+
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title">@Model.FullName</h5>
+        <p class="card-text mb-1"><strong>Email:</strong> @Model.Email</p>
+        <p class="card-text mb-1"><strong>National ID:</strong> @Model.NationalId</p>
+        @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
+        {
+            <p class="card-text mb-1"><strong>Phone:</strong> @Model.PhoneNumber</p>
+        }
+        <p class="card-text"><strong>Birthdate:</strong> @Model.Birthdate.ToShortDateString()</p>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@Model.Id">Details</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    </div>
+</div>
+

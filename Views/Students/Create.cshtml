@@ -1,0 +1,16 @@
+@model CourseEnrollmentSystem.ViewModels.CreateStudentViewModel
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+
+<h2 class="mb-3">Add Student</h2>
+
+<form asp-action="Create" method="post">
+    @await Html.PartialAsync(partialViewName: "_StudentForm", Model)
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+<partial name="_ValidationScriptsPartial" />
+
