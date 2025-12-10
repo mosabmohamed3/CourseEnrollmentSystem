@@ -1,0 +1,70 @@
+@model CourseEnrollmentSystem.ViewModels.EnrollmentFormViewModel
+
+@{
+    ViewData["Title"] = "Create Enrollment";
+}
+
+<h2 class="mb-3">Enroll Student in Course</h2>
+
+<form asp-action="Create" method="post" id="enrollmentForm">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="StudentId" class="form-label"></label>
+        <select asp-for="StudentId" asp-items="Model.Students" class="form-select">
+            <option value="">Select student</option>
+        </select>
+        <span asp-validation-for="StudentId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CourseId" class="form-label"></label>
+        <select asp-for="CourseId" asp-items="Model.Courses" class="form-select" id="courseSelect">
+            <option value="">Select course</option>
+        </select>
+        <span asp-validation-for="CourseId" class="text-danger"></span>
+    </div>
+
+    <div class="alert alert-info" id="availableSlotsInfo">
+        Available slots: <span id="availableSlots">@Model.AvailableSlots</span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enroll</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+<partial name="_ValidationScriptsPartial" />
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(function () {
+        function loadSlots(courseId) {
+            if (!courseId) {
+                $("#availableSlots").text("0");
+                $("button[type='submit']").prop("disabled", true);
+                return;
+            }
+
+            $.getJSON("@Url.Action("AvailableSlots")", { courseId: courseId }, function (data) {
+                $("#availableSlots").text(data.availableSlots);
+
+                if (data.availableSlots <= 0) {
+                    $("button[type='submit']").prop("disabled", true);
+                    $("#availableSlotsInfo").removeClass("alert-info").addClass("alert-warning");
+                } else {
+                    $("button[type='submit']").prop("disabled", false);
+                    $("#availableSlotsInfo").removeClass("alert-warning").addClass("alert-info");
+                }
+            });
+        }
+
+        $("#courseSelect").on("change", function () {
+            const courseId = $(this).val();
+            loadSlots(courseId);
+        });
+
+        // initial load
+        loadSlots($("#courseSelect").val());
+    });
+</script>
+

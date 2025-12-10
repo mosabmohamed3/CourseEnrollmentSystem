@@ -1,0 +1,16 @@
+@model CourseEnrollmentSystem.ViewModels.EnrollmentListItemViewModel
+
+@{
+    ViewData["Title"] = "Delete Enrollment";
+}
+
+<h2 class="mb-3 text-danger">Delete Enrollment</h2>
+
+<p>Are you sure you want to delete the enrollment of <strong>@Model.StudentName</strong> in <strong>@Model.CourseTitle</strong>?</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
