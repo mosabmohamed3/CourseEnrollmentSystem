@@ -1,0 +1,13 @@
+namespace CourseEnrollmentSystem.Models;
+
+public class Student
+{
+    public int Id { get; set; }
+    public string FullName { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public DateTime Birthdate { get; set; }
+    public string NationalId { get; set; } = null!;
+    public string? PhoneNumber { get; set; }
+    public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+}
+
